@@ -17,6 +17,7 @@
 		<select id="cas_server_version" name="cas_server_version">
 			<?php $version = $_['cas_server_version'];?>
 			<option value="S1" <?php echo $version=='S1'?'selected':''; ?>>SAML 1.1</option>
+			<option value="3.0" <?php echo $version=='3.0'?'selected':''; ?>>CAS 3.0</option>
 			<option value="2.0" <?php echo $version=='2.0'?'selected':''; ?>>CAS 2.0</option>
 			<option value="1.0" <?php echo $version=='1.0'?'selected':''; ?>>CAS 1.0</option>
 		</select>

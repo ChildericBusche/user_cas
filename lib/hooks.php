@@ -42,8 +42,8 @@ class OC_USER_CAS_Hooks {
 
 
 			if ($cas_uid == $uid) {
-				\OCP\Util::writeLog('cas','attr  \"'.implode(',',$cas_attributes).'\" for the user: '.$uid, \OCP\Util::DEBUG);
-
+				
+				\OCP\Util::writeLog('cas','attr  \"'.implode_r(',',$cas_attributes).'\" for the user: '.$uid, \OCP\Util::DEBUG);
 
 				if (array_key_exists($casBackend->displayNameMapping, $cas_attributes)) 
 					$attributes['cas_name'] = $cas_attributes[$casBackend->displayNameMapping];	
@@ -70,7 +70,7 @@ class OC_USER_CAS_Hooks {
 						return false;
 					}
 					else {
-						$random_password = OC_Util::generateRandomBytes(20);
+						$random_password = OC::$server->getSecureRandom()->getMediumStrengthGenerator()->generate(20);
 						\OCP\Util::writeLog('cas','Creating new user: '.$uid, \OCP\Util::DEBUG);
 						$userDatabase->createUser($uid, $random_password);
 
@@ -170,4 +170,10 @@ function update_groups($uid, $groups, $protected_groups=array(), $just_created=f
 			}
 		}
 	}
+}
+
+function implode_r($g, $p) {
+    return is_array($p) ?
+           implode($g, array_map(__FUNCTION__, array_fill(0, count($p), $g), $p)) : 
+           $p;
 }

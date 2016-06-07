@@ -50,7 +50,7 @@ class OC_USER_CAS extends OC_User_Backend {
 
 	public function __construct() {
 		$this->autocreate = OCP\Config::getAppValue('user_cas', 'cas_autocreate', true);
-		$this->cas_link_to_ldap_backend = \OCP\Config::getAppValue('user_cas', 'cas_link_to_ldap_backend', false);
+		$this->cas_link_to_ldap_backend = OCP\Config::getAppValue('user_cas', 'cas_link_to_ldap_backend', false);
 		$this->updateUserData = OCP\Config::getAppValue('user_cas', 'cas_update_user_data', true);
 		$this->defaultGroup = OCP\Config::getAppValue('user_cas', 'cas_default_group', '');
 		$this->protectedGroups = explode (',', str_replace(' ', '', OCP\Config::getAppValue('user_cas', 'cas_protected_groups', '')));
@@ -66,18 +66,18 @@ class OC_USER_CAS extends OC_User_Backend {
 			$casVersion = OCP\Config::getAppValue('user_cas', 'cas_server_version', '2.0');
 			$casHostname = OCP\Config::getAppValue('user_cas', 'cas_server_hostname', $_SERVER['SERVER_NAME']);
 			$casPort = OCP\Config::getAppValue('user_cas', 'cas_server_port', 443);
-			$casPath = OCP\Config::getAppValue('user_cas', 'cas_server_path', '/cas');
-			$casDebugFile=OCP\Config::getAppValue('user_cas', 'cas_debug_file', '');
+			$casPath = OCP\Config::getAppValue('user_cas', 'cas_server_path', '');
+			$casDebugFile= OCP\Config::getAppValue('user_cas', 'cas_debug_file', '');
 			$casCertPath = OCP\Config::getAppValue('user_cas', 'cas_cert_path', '');
-			$php_cas_path=OCP\Config::getAppValue('user_cas', 'cas_php_cas_path', 'CAS.php');
+			$php_cas_path=OCP\Config::getAppValue('user_cas', 'cas_php_cas_path', 'phpCAS/CAS.php');
 			$cas_service_url = OCP\Config::getAppValue('user_cas', 'cas_service_url', '');
 
 			if (!class_exists('phpCAS')) {
-				if (empty($php_cas_path)) $php_cas_path='CAS.php';
-				\OCP\Util::writeLog('cas',"Try to load phpCAS library ($php_cas_path)", \OCP\Util::DEBUG);
+				if (empty($php_cas_path)) $php_cas_path='phpCAS/CAS.php';
+				\OCP\Util::writeLog('cas',"Try to load phpCAS library ".$php_cas_path, \OCP\Util::DEBUG);
 				include_once($php_cas_path);
 				if (!class_exists('phpCAS')) {
-					\OCP\Util::writeLog('cas','Fail to load phpCAS library !', \OCP\Util::ERROR);
+					\OCP\Util::writeLog('cas','Fail to load phpCAS library ! '.$php_cas_path, \OCP\Util::ERROR);
 					return false;
 				}
 			}
@@ -86,7 +86,7 @@ class OC_USER_CAS extends OC_User_Backend {
 				phpCAS::setDebug($casDebugFile);
 			}
 			
-			phpCAS::client($casVersion,$casHostname,(int)$casPort,$casPath,false);
+			phpCAS::client($casVersion,$casHostname,(int)$casPort,$casPath);
 			
 			if (!empty($cas_service_url)) {
 				phpCAS::setFixedServiceURL($cas_service_url);
